@@ -1,0 +1,380 @@
+/* =========================================================
+   Glass UI — shared design system
+   live-location-tracker  (interface only, no logic changes)
+   ========================================================= */
+
+:root {
+    --bg-0: #05060f;
+    --bg-1: #0b0f24;
+
+    --glass-bg: rgba(255, 255, 255, .07);
+    --glass-bg-strong: rgba(255, 255, 255, .12);
+    --glass-brd: rgba(255, 255, 255, .18);
+    --glass-brd-lit: rgba(255, 255, 255, .38);
+
+    --txt: #eef2ff;
+    --txt-dim: #b6bfdd;
+
+    --accent: #6ee7ff;
+    --accent-2: #a78bfa;
+    --accent-3: #34d399;
+
+    --blur: 18px;
+    --radius: 18px;
+    --radius-sm: 12px;
+
+    --shadow: 0 18px 45px -18px rgba(0, 0, 0, .75);
+    --ring: 0 0 0 1px var(--glass-brd) inset;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* ---------- reset bits ---------- */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+/* ---------- animated aurora background ---------- */
+.glass-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+        radial-gradient(1200px 700px at 12% -10%, #1b2a6b 0%, transparent 60%),
+        radial-gradient(900px 600px at 105% 8%, #4a1f6b 0%, transparent 62%),
+        linear-gradient(160deg, var(--bg-0), var(--bg-1) 55%, #060814);
+    overflow: hidden;
+}
+
+.glass-bg__orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: .5;
+    will-change: transform;
+    animation: orbDrift 26s var(--ease) infinite alternate;
+}
+
+.glass-bg__orb--1 {
+    width: 46vmax;
+    height: 46vmax;
+    left: -12vmax;
+    top: -14vmax;
+    background: radial-gradient(circle, #2f6bff 0%, transparent 68%);
+}
+
+.glass-bg__orb--2 {
+    width: 40vmax;
+    height: 40vmax;
+    right: -10vmax;
+    top: 18vmax;
+    background: radial-gradient(circle, #b14bff 0%, transparent 68%);
+    animation-duration: 32s;
+    animation-delay: -6s;
+}
+
+.glass-bg__orb--3 {
+    width: 36vmax;
+    height: 36vmax;
+    left: 28vmax;
+    bottom: -16vmax;
+    background: radial-gradient(circle, #00e5c0 0%, transparent 68%);
+    animation-duration: 38s;
+    animation-delay: -14s;
+}
+
+.glass-bg__grid {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+    -webkit-mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+    animation: gridSlide 40s linear infinite;
+}
+
+@keyframes orbDrift {
+    from {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    to {
+        transform: translate3d(6vmax, 5vmax, 0) scale(1.18);
+    }
+}
+
+@keyframes gridSlide {
+    to {
+        background-position: 46px 46px, 46px 46px;
+    }
+}
+
+/* ---------- glass surfaces ---------- */
+.glass {
+    position: relative;
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
+    backdrop-filter: blur(var(--blur)) saturate(150%);
+    border: 1px solid var(--glass-brd);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow), var(--ring);
+    overflow: hidden;
+    isolation: isolate;
+}
+
+/* top sheen highlight */
+.glass::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--glass-brd-lit), transparent);
+    opacity: .9;
+}
+
+.glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(160deg, rgba(255, 255, 255, .14), transparent 42%);
+    pointer-events: none;
+}
+
+.glass--strong {
+    background: var(--glass-bg-strong);
+}
+
+.glass--pad {
+    padding: 1.15rem 1.25rem;
+}
+
+/* drifting highlight sweep on hover */
+.glass--shine::after {
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, .16) 48%, transparent 62%);
+    background-size: 260% 260%;
+    background-position: 130% 0;
+    transition: background-position .85s var(--ease);
+    z-index: 0;
+}
+
+.glass--shine:hover::after {
+    background-position: -30% 0;
+}
+
+/* ---------- text ---------- */
+.g-title {
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    color: var(--txt);
+    text-shadow: 0 2px 18px rgba(110, 231, 255, .18);
+}
+
+.g-dim {
+    color: var(--txt-dim);
+}
+
+.g-accent {
+    background: linear-gradient(92deg, var(--accent), var(--accent-2) 55%, var(--accent-3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ---------- buttons ---------- */
+.g-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    width: 100%;
+    padding: .78rem 1.1rem;
+    font: inherit;
+    font-weight: 600;
+    color: var(--txt);
+    text-decoration: none;
+    border: 1px solid var(--glass-brd);
+    border-radius: var(--radius-sm);
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
+    backdrop-filter: blur(var(--blur)) saturate(150%);
+    box-shadow: var(--shadow), var(--ring);
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: transform .32s var(--ease), box-shadow .32s var(--ease),
+        background-color .32s var(--ease), border-color .32s var(--ease);
+}
+
+.g-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, .22) 50%, transparent 68%);
+    background-size: 250% 250%;
+    background-position: 140% 0;
+    transition: background-position .75s var(--ease);
+}
+
+.g-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--glass-brd-lit);
+    background: var(--glass-bg-strong);
+    box-shadow: 0 22px 50px -18px rgba(0, 0, 0, .8), 0 0 0 1px var(--glass-brd-lit) inset;
+}
+
+.g-btn:hover::after {
+    background-position: -40% 0;
+}
+
+.g-btn:active {
+    transform: translateY(0) scale(.985);
+}
+
+.g-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.g-btn:disabled {
+    opacity: .55;
+    cursor: progress;
+}
+
+.g-btn--primary {
+    background: linear-gradient(92deg, rgba(110, 231, 255, .28), rgba(167, 139, 250, .3));
+    border-color: rgba(167, 139, 250, .5);
+}
+
+.g-btn--primary:hover {
+    background: linear-gradient(92deg, rgba(110, 231, 255, .42), rgba(167, 139, 250, .44));
+}
+
+/* ---------- inputs ---------- */
+.g-input {
+    width: 100%;
+    padding: .8rem .95rem;
+    font: inherit;
+    color: var(--txt);
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid var(--glass-brd);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color .3s var(--ease), box-shadow .3s var(--ease), background-color .3s var(--ease);
+}
+
+.g-input::placeholder {
+    color: rgba(198, 208, 240, .62);
+}
+
+.g-input:focus {
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, .1);
+    box-shadow: 0 0 0 3px rgba(110, 231, 255, .18);
+}
+
+/* ---------- live dot ---------- */
+.g-dot {
+    display: inline-block;
+    width: .55rem;
+    height: .55rem;
+    border-radius: 50%;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, .65);
+    animation: dotPulse 2.1s ease-out infinite;
+    vertical-align: middle;
+}
+
+@keyframes dotPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(52, 211, 153, .6);
+    }
+
+    70% {
+        box-shadow: 0 0 0 .65rem rgba(52, 211, 153, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+    }
+}
+
+/* ---------- entrance animations ---------- */
+.reveal {
+    opacity: 0;
+    transform: translateY(18px) scale(.985);
+    animation: revealUp .8s var(--ease) forwards;
+}
+
+.reveal-1 { animation-delay: .06s; }
+.reveal-2 { animation-delay: .14s; }
+.reveal-3 { animation-delay: .22s; }
+.reveal-4 { animation-delay: .3s; }
+.reveal-5 { animation-delay: .38s; }
+.reveal-6 { animation-delay: .46s; }
+
+@keyframes revealUp {
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.float {
+    animation: floatY 6s ease-in-out infinite;
+}
+
+@keyframes floatY {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+/* ---------- scrollbar ---------- */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, .25) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, .22);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+}
+
+/* ---------- accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+    }
+
+    .reveal {
+        opacity: 1;
+        transform: none;
+    }
+}

@@ -5,35 +5,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="/glass.css">
     <style>
         body {
             display: grid;
             place-items: center;
             height: 100vh;
+            margin: 0;
+            padding: 1.25rem;
+            color: var(--txt);
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
         }
 
         form {
-            width: 300px;
+            width: 340px;
+            max-width: 100%;
+            padding: 2rem 1.75rem;
             text-align: center;
+            animation: revealUp .8s var(--ease) both;
+        }
+
+        .lock {
+            display: grid;
+            place-items: center;
+            width: 3.4rem;
+            height: 3.4rem;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: linear-gradient(145deg, rgba(110, 231, 255, .3), rgba(167, 139, 250, .3));
+            border: 1px solid var(--glass-brd);
+            font-size: 1.5rem;
+            box-shadow: 0 0 26px -6px rgba(110, 231, 255, .5);
+            animation: floatY 6s ease-in-out infinite;
+        }
+
+        h1 {
+            margin: 0 0 .35rem;
+            font-size: 1.65rem;
+        }
+
+        .sub {
+            margin: 0 0 1.5rem;
+            font-size: .82rem;
+            color: var(--txt-dim);
+            letter-spacing: .04em;
+        }
+
+        .field {
+            margin-bottom: .9rem;
+        }
+
+        .btn-wrap {
+            margin-top: 1.4rem;
         }
     </style>
 </head>
 
 <body>
-    <form action="/login" method="post">
-        <h1 class="title">Login</h1>
+    <div class="glass-bg"></div>
+    <div class="glass-bg__grid"></div>
+
+    <form action="/login" method="post" class="glass glass--pad glass--shine g-tilt">
+        <div class="lock" aria-hidden="true">🔒</div>
+        <h1 class="g-title">Login</h1>
+        <p class="sub">LIVE LOCATION TRACKER</p>
 
         <div class="field">
-            <input type="text" class="input" placeholder="Username" required name="username">
+            <input type="text" class="input g-input" placeholder="Username" required name="username"
+                autocomplete="username">
         </div>
 
         <div class="field">
-            <input type="password" class="input" placeholder="Password" required name="password">
+            <input type="password" class="input g-input" placeholder="Password" required name="password"
+                autocomplete="current-password">
         </div>
 
-        <input type="submit" value="Login" class="button is-fullwidth is-primary">
+        <div class="btn-wrap">
+            <input type="submit" value="Login" class="button is-fullwidth g-btn g-btn--primary">
+        </div>
     </form>
+
+    <script src="/glass.js"></script>
 </body>
 
 </html>

