@@ -4,166 +4,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="/glass.css">
+    <title>Location Monitoring System</title>
+    <meta name="description" content="Real-time location visualization and authorized monitoring tools.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+    <link rel="stylesheet" href="/cyber.css">
     <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-            color: var(--txt);
-            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-        }
-
-        header {
-            padding: 2.25rem 1.25rem 2.75rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, .1);
-            background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02));
-            -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
-            backdrop-filter: blur(var(--blur)) saturate(150%);
-        }
-
-        .brand {
-            display: inline-flex;
+        /* ---------- top bar ---------- */
+        .cy-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
             align-items: center;
-            gap: .55rem;
-            margin-bottom: .35rem;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: var(--cy-s3) var(--cy-s5);
+            padding: var(--cy-s3) clamp(var(--cy-s4), 4vw, var(--cy-s6));
+            background: rgba(5, 8, 13, .88);
+            border-bottom: 1px solid var(--cy-border);
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
         }
 
-        h1 {
-            margin: 0;
-            font-size: clamp(1.5rem, 4vw, 2.1rem);
+        .cy-brand {
+            display: grid;
+            gap: 2px;
+        }
+
+        .cy-brand__name {
+            font-family: var(--cy-font-display);
+            font-size: .95rem;
             font-weight: 700;
-            letter-spacing: -.02em;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--cy-text);
         }
 
-        .credit {
-            display: inline-block;
-            margin: .35rem 0 0;
-            font-size: .8rem;
-            color: var(--txt-dim);
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: color .3s var(--ease), border-color .3s var(--ease);
+        .cy-brand__name em {
+            font-style: normal;
+            color: var(--cy-green);
         }
 
-        .credit:hover {
-            color: var(--accent);
-            border-color: var(--accent);
+        .cy-brand__sub {
+            font-family: var(--cy-font-mono);
+            font-size: .6rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--cy-text-dim);
         }
 
-        .send {
-            display: inline-flex;
+        .cy-header__meta {
+            display: flex;
             align-items: center;
             flex-wrap: wrap;
-            justify-content: center;
-            gap: .4rem;
-            margin: 1.15rem auto 0;
-            padding: .55rem .9rem;
-            font-size: .85rem;
-            color: var(--txt-dim);
-            border-radius: 999px;
+            gap: var(--cy-s3);
         }
 
-        code {
-            padding: .18rem .5rem;
-            font-size: .82rem;
-            color: var(--accent);
-            word-break: break-all;
-            background: rgba(110, 231, 255, .1);
-            border: 1px solid rgba(110, 231, 255, .25);
-            border-radius: 8px;
-        }
-
-        #tar-content {
-            width: min(680px, 100%);
-            margin: 0 auto;
-            padding: 1.75rem 1.25rem 3rem;
-            display: flex;
-            flex-direction: column;
-            gap: .6rem;
-        }
-
-        .section-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: .75rem;
-            margin-bottom: .5rem;
-        }
-
-        .section-head h1 {
-            font-size: 1.05rem;
-            color: var(--txt-dim);
+        .cy-credit {
+            font-family: var(--cy-font-mono);
+            font-size: .6rem;
+            letter-spacing: .16em;
             text-transform: uppercase;
-            letter-spacing: .12em;
+            color: var(--cy-text-dim);
+            white-space: nowrap;
         }
 
-        .count {
-            font-size: .75rem;
-            color: var(--txt-dim);
+        .cy-credit b {
+            color: var(--cy-text);
+            font-weight: 600;
         }
 
-        .tar {
+        /* ---------- layout ---------- */
+        .cy-main {
+            width: min(1180px, 100%);
+            margin: 0 auto;
+            padding: clamp(var(--cy-s5), 5vw, var(--cy-s7)) clamp(var(--cy-s4), 4vw, var(--cy-s6))
+                var(--cy-s7);
+            display: grid;
+            gap: var(--cy-s6);
+        }
+
+        /* ---------- hero ---------- */
+        .cy-hero {
+            display: grid;
+            gap: var(--cy-s5);
+        }
+
+        .cy-deploy {
+            display: grid;
+            gap: var(--cy-s2);
+        }
+
+        .cy-deploy__row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--cy-s2) var(--cy-s3);
+        }
+
+        .cy-deploy code {
+            font-family: var(--cy-font-mono);
+            font-size: .8rem;
+            color: var(--cy-green);
+            word-break: break-all;
+            padding: 2px 0;
+        }
+
+        .cy-deploy__note {
+            margin: var(--cy-s1) 0 0;
+            padding-top: var(--cy-s3);
+            border-top: 1px solid var(--cy-border-soft);
+            font-size: .8rem;
+            color: var(--cy-text-dim);
+        }
+
+        /* ---------- target section ----------
+           #tar-content IS the grid: the existing socket handler appends
+           new cards directly to this element, so making it the grid
+           container means live cards lay out with the server-rendered
+           ones automatically. */
+        #tar-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: var(--cy-s3);
+        }
+
+        .cy-section-head {
+            grid-column: 1 / -1;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: .75rem;
-            animation: revealUp .55s var(--ease) both;
+            flex-wrap: wrap;
+            gap: var(--cy-s3);
+            margin-bottom: var(--cy-s2);
+            padding-bottom: var(--cy-s3);
+            border-bottom: 1px solid var(--cy-border-soft);
         }
 
-        .tar::after {
-            content: "›";
-            font-size: 1.1rem;
-            color: var(--txt-dim);
-            transition: transform .3s var(--ease), color .3s var(--ease);
+        .cy-section-head h2 {
+            margin: 0;
+            font-family: var(--cy-font-display);
+            font-size: .82rem;
+            font-weight: 600;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--cy-text);
         }
 
-        .tar:hover::after {
-            transform: translateX(4px);
-            color: var(--accent);
-        }
+        @media (max-width: 560px) {
+            .cy-header {
+                justify-content: flex-start;
+            }
 
-        .empty {
-            padding: 2.25rem 1rem;
-            text-align: center;
-            font-size: .9rem;
-            color: var(--txt-dim);
+            .cy-brand__name {
+                font-size: .82rem;
+            }
         }
     </style>
 </head>
 
-<body>
-    <div class="glass-bg"></div>
-    <div class="glass-bg__grid"></div>
+<body class="cy-body cy-scroll">
+    <div class="cy-bg"></div>
+    <div class="cy-bg__grid"></div>
+    <div class="cy-bg__scan"></div>
 
-    <header class="reveal">
-        <div class="brand">
-            <span class="g-dot" aria-hidden="true"></span>
-            <h1 class="g-title">Live Location <span class="g-accent">Tracker</span></h1>
+    <!-- ================= HEADER ================= -->
+    <header class="cy-header">
+        <div class="cy-brand">
+            <span class="cy-brand__name">Live Location <em>Intelligence</em></span>
+            <span class="cy-brand__sub">Ethical Monitoring Interface</span>
         </div>
-        <a href="http://madhanmaaz.netlify.app/" class="credit">Created by madhanmaaz</a>
-        <p class="send glass glass--pad">
-            <span>Send to Target:</span>
-            <code>{{ global.remoteURL }}/weather</code>
-        </p>
+        <div class="cy-header__meta">
+            <!-- neutral label: the application exposes no public
+                 connection-state signal on this page -->
+            <span class="cy-status">
+                <span class="cy-dot cy-dot--idle" aria-hidden="true"></span>
+                Monitoring Interface
+            </span>
+            <span class="cy-credit">Built by <b>Kishore Kumar</b></span>
+        </div>
     </header>
 
-    <section id="tar-content">
-        <div class="section-head">
-            <h1>Targets</h1>
-            <span class="count"><span class="g-dot" aria-hidden="true"></span> live</span>
-        </div>
+    <main class="cy-main">
+        <!-- ================= HERO ================= -->
+        <section class="cy-hero">
+            <div>
+                <span class="cy-label cy-in">Operations Console</span>
+                <h1 class="cy-h1 cy-in" style="--cy-d:80ms">Location Monitoring System</h1>
+                <p class="cy-lead cy-in" style="--cy-d:160ms">
+                    Real-time location visualization and authorized monitoring tools.
+                </p>
+            </div>
 
-        {{ for(value, key in TARGETS) }}
-        <a href="/map?id={{ key }}" class="button is-fullwidth g-btn tar">
-            {{ key }}
-        </a>
-        {{/}}
-    </section>
+            <div class="cy-panel cy-panel--pad cy-panel--hud cy-deploy cy-in" style="--cy-d:240ms">
+                <div class="cy-deploy__row">
+                    <span class="cy-label">Tracker Endpoint</span>
+                    <span class="cy-label cy-label--cyan">Send to Target</span>
+                </div>
+                <code>{{ global.remoteURL }}/weather</code>
+                <p class="cy-deploy__note">
+                    Open this address on a device whose owner has agreed to be monitored, then approve the
+                    browser location prompt. Coordinates are only transmitted after that permission is granted.
+                </p>
+            </div>
+        </section>
+
+        <!-- ================= TARGETS ================= -->
+        <!-- existing #tar-content container retained: the socket handler
+             appends new target cards to this exact element -->
+        <section id="tar-content">
+            <div class="cy-section-head">
+                <h2>Active Targets</h2>
+                <span class="cy-badge" data-cy-target-count>0 TARGETS</span>
+            </div>
+
+            {{~ const __targetCount = Object.keys(TARGETS).length }}
+            {{ if (__targetCount > 0) }}
+            {{ for(value, key in TARGETS) }}
+            <a href="/map?id={{ key }}" class="button is-fullwidth cy-card cy-in" data-cy-counted="1">
+                <span class="cy-card__label">Target Node</span>
+                <span class="cy-card__id">{{ key }}</span>
+                <span class="cy-card__meta">LAT {{ value[0] }}&ensp;·&ensp;LNG {{ value[1] }}</span>
+            </a>
+            {{/}}
+            {{ else }}
+            <div class="cy-empty">
+                <span class="cy-empty__title">No targets registered</span>
+                <p class="cy-empty__text">
+                    Nothing has reported a location yet. Send the tracker endpoint above to an authorized
+                    device to start a session.
+                </p>
+            </div>
+            {{/}}
+        </section>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/socket.io@4.8.1/client-dist/socket.io.min.js"></script>
-    <script src="/glass.js"></script>
+    <script src="/cyber-ui.js"></script>
     <script>
         const content = document.querySelector("#tar-content")
         const socket = io("", {
@@ -175,7 +255,7 @@
         socket.on("user-connected", newId => {
             const a = document.createElement('a')
             a.href = `/map?id=${newId}`
-            a.className = "button is-fullwidth g-btn tar"
+            a.className = "button is-fullwidth cy-card"
             a.innerText = newId
             content.appendChild(a)
         })

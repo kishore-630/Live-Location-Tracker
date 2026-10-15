@@ -4,88 +4,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="/glass.css">
+    <title>Login — Secure Access Terminal</title>
+    <meta name="description" content="Authorized access terminal for the Live Location Intelligence monitoring interface.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+    <link rel="stylesheet" href="/cyber.css">
     <style>
         body {
             display: grid;
             place-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            padding: 1.25rem;
-            color: var(--txt);
-            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            padding: var(--cy-s5) var(--cy-s4);
         }
 
-        form {
-            width: 340px;
-            max-width: 100%;
-            padding: 2rem 1.75rem;
+        .cy-auth {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .cy-auth__head {
+            margin-bottom: var(--cy-s5);
             text-align: center;
-            animation: revealUp .8s var(--ease) both;
         }
 
-        .lock {
+        .cy-auth__mark {
             display: grid;
             place-items: center;
-            width: 3.4rem;
-            height: 3.4rem;
-            margin: 0 auto 1rem;
+            width: 52px;
+            height: 52px;
+            margin: 0 auto var(--cy-s4);
+            font-size: 22px;
+            color: var(--cy-green);
+            background: rgba(57, 255, 136, .07);
+            border: 1px solid var(--cy-border);
             border-radius: 50%;
-            background: linear-gradient(145deg, rgba(110, 231, 255, .3), rgba(167, 139, 250, .3));
-            border: 1px solid var(--glass-brd);
-            font-size: 1.5rem;
-            box-shadow: 0 0 26px -6px rgba(110, 231, 255, .5);
-            animation: floatY 6s ease-in-out infinite;
         }
 
-        h1 {
-            margin: 0 0 .35rem;
-            font-size: 1.65rem;
-        }
-
-        .sub {
-            margin: 0 0 1.5rem;
-            font-size: .82rem;
-            color: var(--txt-dim);
+        .cy-auth__title {
+            margin: var(--cy-s2) 0 var(--cy-s1);
+            font-size: clamp(1.15rem, 4.5vw, 1.4rem);
             letter-spacing: .04em;
         }
 
-        .field {
-            margin-bottom: .9rem;
+        .cy-auth__sub {
+            margin: 0;
+            font-family: var(--cy-font-mono);
+            font-size: .68rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--cy-text-dim);
         }
 
-        .btn-wrap {
-            margin-top: 1.4rem;
+        .cy-auth__foot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: var(--cy-s2);
+            margin-top: var(--cy-s5);
+            padding-top: var(--cy-s4);
+            border-top: 1px solid var(--cy-border-soft);
+            font-family: var(--cy-font-mono);
+            font-size: .62rem;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            color: var(--cy-text-dim);
+            text-align: center;
         }
     </style>
 </head>
 
-<body>
-    <div class="glass-bg"></div>
-    <div class="glass-bg__grid"></div>
+<body class="cy-body cy-scroll">
+    <div class="cy-bg"></div>
+    <div class="cy-bg__grid"></div>
+    <div class="cy-bg__scan"></div>
 
-    <form action="/login" method="post" class="glass glass--pad glass--shine g-tilt">
-        <div class="lock" aria-hidden="true">🔒</div>
-        <h1 class="g-title">Login</h1>
-        <p class="sub">LIVE LOCATION TRACKER</p>
+    <main class="cy-auth cy-in">
+        <section class="cy-panel cy-panel--pad cy-panel--hud">
+            <header class="cy-auth__head">
+                <div class="cy-auth__mark" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3l7 3v6c0 4.2-2.9 7.9-7 9-4.1-1.1-7-4.8-7-9V6l7-3z" />
+                        <path d="M9.5 12.2l1.9 1.9 3.4-3.6" />
+                    </svg>
+                </div>
+                <span class="cy-label">System Identification</span>
+                <h1 class="cy-title cy-auth__title">Secure Access Terminal</h1>
+                <p class="cy-auth__sub">Live Location Intelligence</p>
+            </header>
 
-        <div class="field">
-            <input type="text" class="input g-input" placeholder="Username" required name="username"
-                autocomplete="username">
-        </div>
+            <!-- form action, method and field names unchanged -->
+            <form action="/login" method="post">
+                <div class="cy-field">
+                    <label class="cy-label" for="cy-username">Username</label>
+                    <input type="text" class="cy-input" id="cy-username" placeholder="Enter username" required
+                        name="username" autocomplete="username" autocapitalize="none" spellcheck="false">
+                </div>
 
-        <div class="field">
-            <input type="password" class="input g-input" placeholder="Password" required name="password"
-                autocomplete="current-password">
-        </div>
+                <div class="cy-field">
+                    <label class="cy-label" for="cy-password">Password</label>
+                    <input type="password" class="cy-input" id="cy-password" placeholder="Enter password" required
+                        name="password" autocomplete="current-password">
+                </div>
 
-        <div class="btn-wrap">
-            <input type="submit" value="Login" class="button is-fullwidth g-btn g-btn--primary">
-        </div>
-    </form>
+                <input type="submit" value="Authenticate" class="cy-btn cy-btn--primary">
+            </form>
 
-    <script src="/glass.js"></script>
+            <footer class="cy-auth__foot">
+                <span class="cy-dot cy-dot--idle" aria-hidden="true"></span>
+                <span>Authorized access only&ensp;·&ensp;Session token required</span>
+            </footer>
+        </section>
+
+        <p class="cy-lead cy-in" style="--cy-d:180ms; text-align:center; margin-top:var(--cy-s4);">
+            This interface is intended for devices and accounts you are authorized to monitor.
+        </p>
+    </main>
+
+    <script src="/cyber-ui.js"></script>
 </body>
 
 </html>
