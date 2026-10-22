@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <p align="center">
   <img src="docs/assets/banner.svg" alt="Live Location Intelligence — faceted hooded figure lit by magenta rim light" width="100%">
 </p>
@@ -680,3 +681,6 @@ Built on [Express](https://expressjs.com), [Socket.IO](https://socket.io), [Leaf
 <p align="center">
   <img src="docs/assets/banner.svg" alt="Live Location Intelligence" width="100%">
 </p>
+=======
+## Live Location Tracker ##
+>>>>>>> origin/main
