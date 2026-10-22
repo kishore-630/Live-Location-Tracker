@@ -159,15 +159,15 @@ Then open:
 
 | Route | Purpose | Auth required |
 |-------|---------|---------------|
-| `http://localhost:6589/login` | Secure access terminal | — |
-| `http://localhost:6589/` | Monitoring dashboard | Yes — `token` cookie |
-| `http://localhost:6589/map?id=<ID>` | Live map for one target | Yes — `token` cookie |
-| `http://localhost:6589/weather` | Tracker / weather share page | — |
+| `http://localhost:5000/login` | Secure access terminal | — |
+| `http://localhost:5000/` | Monitoring dashboard | Yes — `token` cookie |
+| `http://localhost:5000/map?id=<ID>` | Live map for one target | Yes — `token` cookie |
+| `http://localhost:5000/weather` | Tracker / weather share page | — |
 
 The console prints both the local and the tunnel URL:
 
 ```text
-LOCAL  : http://localhost:6589
+LOCAL  : http://localhost:5000
 REMOTE : https://<something>.trycloudflare.com
 ```
 
