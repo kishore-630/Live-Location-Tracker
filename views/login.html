@@ -9,123 +9,179 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
-    <link rel="stylesheet" href="/cyber.css">
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="/magenta.css">
     <style>
         body {
             display: grid;
-            place-items: center;
+            grid-template-columns: 1fr minmax(0, 440px);
+            align-items: center;
+            gap: clamp(var(--mg-s6), 6vw, var(--mg-s8));
             min-height: 100vh;
             margin: 0;
-            padding: var(--cy-s5) var(--cy-s4);
+            padding: var(--mg-s6) clamp(var(--mg-s4), 5vw, var(--mg-s7));
         }
 
-        .cy-auth {
+        /* restrained echo of the hero: the artwork sits far left and is
+           heavily cropped, never behind the form */
+        .mg-side {
+            position: relative;
+            align-self: stretch;
+            min-height: 320px;
+            pointer-events: none;
+            opacity: .8;
+        }
+
+        .mg-side::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(5, 4, 11, .35) 0%, rgba(5, 4, 11, .88) 72%, var(--mg-bg) 100%);
+        }
+
+        .mg-side .mg-figure {
+            object-position: 30% 26%;
+        }
+
+        .mg-auth {
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
         }
 
-        .cy-auth__head {
-            margin-bottom: var(--cy-s5);
-            text-align: center;
+        .mg-auth__head {
+            margin-bottom: var(--mg-s5);
         }
 
-        .cy-auth__mark {
+        .mg-auth__mark {
             display: grid;
             place-items: center;
             width: 52px;
             height: 52px;
-            margin: 0 auto var(--cy-s4);
+            margin-bottom: var(--mg-s4);
             font-size: 22px;
-            color: var(--cy-green);
-            background: rgba(57, 255, 136, .07);
-            border: 1px solid var(--cy-border);
+            color: var(--mg-pink);
+            background: rgba(255, 22, 139, .08);
+            border: 1px solid var(--mg-border);
             border-radius: 50%;
         }
 
-        .cy-auth__title {
-            margin: var(--cy-s2) 0 var(--cy-s1);
-            font-size: clamp(1.15rem, 4.5vw, 1.4rem);
-            letter-spacing: .04em;
-        }
-
-        .cy-auth__sub {
-            margin: 0;
-            font-family: var(--cy-font-mono);
-            font-size: .68rem;
-            letter-spacing: .18em;
+        .mg-title {
+            margin: var(--mg-s2) 0 var(--mg-s1);
+            font-family: var(--mg-font-display);
+            font-size: clamp(1.6rem, 4.4vw, 2.4rem);
+            font-weight: 400;
+            line-height: 1;
+            letter-spacing: .02em;
             text-transform: uppercase;
-            color: var(--cy-text-dim);
+            color: var(--mg-white);
         }
 
-        .cy-auth__foot {
+        .mg-auth__sub {
+            margin: 0;
+            font-family: var(--mg-font-mono);
+            font-size: .66rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--mg-text-dim);
+        }
+
+        .mg-auth__foot {
             display: flex;
             align-items: center;
             justify-content: center;
             flex-wrap: wrap;
-            gap: var(--cy-s2);
-            margin-top: var(--cy-s5);
-            padding-top: var(--cy-s4);
-            border-top: 1px solid var(--cy-border-soft);
-            font-family: var(--cy-font-mono);
-            font-size: .62rem;
-            letter-spacing: .13em;
+            gap: var(--mg-s2);
+            margin-top: var(--mg-s5);
+            padding-top: var(--mg-s4);
+            border-top: 1px solid var(--mg-border-soft);
+            font-family: var(--mg-font-mono);
+            font-size: .6rem;
+            letter-spacing: .14em;
             text-transform: uppercase;
-            color: var(--cy-text-dim);
+            color: var(--mg-text-dim);
             text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                grid-template-columns: 1fr;
+                justify-items: center;
+                gap: var(--mg-s5);
+            }
+
+            .mg-side {
+                display: none;
+            }
+
+            .mg-auth {
+                max-width: 420px;
+            }
         }
     </style>
 </head>
 
-<body class="cy-body cy-scroll">
-    <div class="cy-bg"></div>
-    <div class="cy-bg__grid"></div>
-    <div class="cy-bg__scan"></div>
+<body class="mg-body mg-scroll">
+    <div class="mg-bg"></div>
+    <div class="mg-grid"></div>
 
-    <main class="cy-auth cy-in">
-        <section class="cy-panel cy-panel--pad cy-panel--hud">
-            <header class="cy-auth__head">
-                <div class="cy-auth__mark" aria-hidden="true">
+    <div class="mg-motion" aria-hidden="true">
+        <div class="mg-motion__particles"></div>
+        <div class="mg-motion__streaks"></div>
+        <div class="mg-motion__glitch"></div>
+    </div>
+
+    <div class="mg-side" aria-hidden="true">
+        <img class="mg-figure" src="/assets/figure.svg" alt="" width="800" height="1010" decoding="async">
+    </div>
+
+    <main class="mg-auth mg-in">
+        <section class="mg-panel mg-panel--pad mg-panel--hud">
+            <header class="mg-auth__head">
+                <div class="mg-auth__mark" aria-hidden="true">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 3l7 3v6c0 4.2-2.9 7.9-7 9-4.1-1.1-7-4.8-7-9V6l7-3z" />
                         <path d="M9.5 12.2l1.9 1.9 3.4-3.6" />
                     </svg>
                 </div>
-                <span class="cy-label">System Identification</span>
-                <h1 class="cy-title cy-auth__title">Secure Access Terminal</h1>
-                <p class="cy-auth__sub">Live Location Intelligence</p>
+                <span class="mg-eyebrow">System Identification</span>
+                <h1 class="mg-title">Secure Access Terminal</h1>
+                <p class="mg-auth__sub">Live Location Intelligence</p>
             </header>
 
             <!-- form action, method and field names unchanged -->
             <form action="/login" method="post">
-                <div class="cy-field">
-                    <label class="cy-label" for="cy-username">Username</label>
-                    <input type="text" class="cy-input" id="cy-username" placeholder="Enter username" required
+                <div class="mg-field">
+                    <label class="mg-label" for="mg-username">Username</label>
+                    <input type="text" class="mg-input" id="mg-username" placeholder="Enter username" required
                         name="username" autocomplete="username" autocapitalize="none" spellcheck="false">
                 </div>
 
-                <div class="cy-field">
-                    <label class="cy-label" for="cy-password">Password</label>
-                    <input type="password" class="cy-input" id="cy-password" placeholder="Enter password" required
+                <div class="mg-field">
+                    <label class="mg-label" for="mg-password">Password</label>
+                    <input type="password" class="mg-input" id="mg-password" placeholder="Enter password" required
                         name="password" autocomplete="current-password">
                 </div>
 
-                <input type="submit" value="Authenticate" class="cy-btn cy-btn--primary">
+                <input type="submit" value="Authenticate" class="mg-btn">
             </form>
 
-            <footer class="cy-auth__foot">
-                <span class="cy-dot cy-dot--idle" aria-hidden="true"></span>
+            <footer class="mg-auth__foot">
+                <span class="mg-dot mg-dot--idle" aria-hidden="true"></span>
                 <span>Authorized access only&ensp;·&ensp;Session token required</span>
             </footer>
         </section>
 
-        <p class="cy-lead cy-in" style="--cy-d:180ms; text-align:center; margin-top:var(--cy-s4);">
+        <p class="mg-credit-line mg-in" style="--mg-d:180ms; justify-content:center; margin-top:var(--mg-s4);">
+            Engineered by <b>Kishore Kumar</b>
+        </p>
+
+        <p class="mg-lede mg-in" style="--mg-d:240ms; text-align:center; margin:var(--mg-s3) 0 0;">
             This interface is intended for devices and accounts you are authorized to monitor.
         </p>
     </main>
 
-    <script src="/cyber-ui.js"></script>
+    <script src="/magenta-ui.js"></script>
 </body>
 
 </html>

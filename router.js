@@ -53,7 +53,8 @@ router.route("/map").get((req, res) => {
     const { id } = req.query
 
     res.render("map", {
-        data: TARGETS[id]
+        data: TARGETS[id],
+        mapCfg: config.map
     })
 })
 

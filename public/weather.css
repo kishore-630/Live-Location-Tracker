@@ -1,0 +1,391 @@
+/* ==========================================================================
+   WEATHER SHARE PAGE — mobile weather-app presentation layer
+   Live Location Tracking System (Kishore Kumar)
+
+   Presentation ONLY. Geolocation, ID generation, POST /weather, the 5s
+   refresh loop and the live-weather lookup all live in the inline script in
+   views/weather.html, which is the single source of application behaviour.
+   This file only styles the three status states that script can put on screen:
+   demo, live and warning.
+
+   This stylesheet is linked ONLY by views/weather.html, so the cyber design
+   system used by /, /login and /map is completely untouched.
+   ========================================================================== */
+
+/* ---------- 1. TOKENS ---------- */
+:root {
+    /* full-bleed background: sky blue -> cyan -> turquoise */
+    --wx-grad-a: #49AEF5;
+    --wx-grad-b: #24C9F5;
+    --wx-grad-c: #00E5D8;
+
+    /* card */
+    --wx-card: #FFFFFF;
+    --wx-ink: #26333D;
+    --wx-ink-soft: #6B7F8C;
+    --wx-ink-faint: #9DAEBA;
+    --wx-shadow: 0 30px 60px -22px rgba(6, 74, 110, .45),
+        0 10px 22px -12px rgba(6, 74, 110, .22);
+
+    /* action */
+    --wx-btn: #80BFF5;
+    --wx-btn-hover: #6BB0EE;
+    --wx-btn-press: #59A1E7;
+
+    /* type */
+    --wx-display: "Baloo 2", "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --wx-body: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+    /* geometry */
+    --wx-radius: 32px;
+    --wx-gutter: clamp(12px, 3.4vw, 28px);
+}
+
+/* ---------- 2. BASE ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    /* paint the base colour on html so overscroll never exposes white */
+    background: var(--wx-grad-b);
+}
+
+body.wx-body {
+    margin: 0;
+    min-height: 100vh;
+    /* dvh-aware viewport, vh fallback above for older mobile browsers */
+    min-height: 100dvh;
+    padding: var(--wx-gutter);
+    padding-top: max(var(--wx-gutter), env(safe-area-inset-top));
+    padding-right: max(var(--wx-gutter), env(safe-area-inset-right));
+    padding-bottom: max(var(--wx-gutter), env(safe-area-inset-bottom));
+    padding-left: max(var(--wx-gutter), env(safe-area-inset-left));
+    display: grid;
+    place-items: center;
+    overflow-x: hidden;
+    background: linear-gradient(112deg,
+            var(--wx-grad-a) 0%,
+            var(--wx-grad-b) 52%,
+            var(--wx-grad-c) 100%) fixed;
+    color: var(--wx-ink);
+    font-family: var(--wx-body);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+    background: rgba(36, 201, 245, .28);
+}
+
+/* ---------- 3. DECORATIVE WASH ---------- */
+/* two soft light blooms that keep the gradient lively on tall phones */
+.wx-glow {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(38vmin 38vmin at 12% 6%, rgba(255, 255, 255, .28), transparent 70%),
+        radial-gradient(42vmin 42vmin at 92% 96%, rgba(0, 255, 227, .26), transparent 72%);
+}
+
+/* ---------- 4. CARD ---------- */
+.wx-card {
+    position: relative;
+    z-index: 1;
+    width: 86%;
+    max-width: 540px;
+    padding: clamp(26px, 6.4vw, 40px) clamp(18px, 5.4vw, 40px) clamp(22px, 5vw, 34px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--wx-card);
+    border-radius: var(--wx-radius);
+    box-shadow: var(--wx-shadow);
+    /* No entrance animation: the card must never depend on an animation
+       completing in order to be visible. */
+}
+
+/* ---------- 5. HEADING + LOCATION ---------- */
+.wx-title {
+    margin: 0;
+    font-family: var(--wx-display);
+    font-size: clamp(1.6rem, 6.6vw, 2.1rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -.02em;
+    color: var(--wx-ink);
+    /* long words wrap instead of forcing a horizontal scrollbar */
+    overflow-wrap: anywhere;
+}
+
+.wx-place {
+    margin: .5rem 0 0;
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .18rem;
+    font-size: clamp(.95rem, 3.8vw, 1.08rem);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--wx-ink-soft);
+    overflow-wrap: anywhere;
+}
+
+.wx-place__pin {
+    width: 1em;
+    height: 1em;
+    flex: none;
+    margin-right: .1rem;
+    fill: var(--wx-btn);
+}
+
+/* the separator is dropped when only one half of the place name is known, so a
+   trailing comma can never imply a country that was never looked up */
+.wx-place--solo .wx-place__sep {
+    display: none;
+}
+
+/* ---------- 6. ILLUSTRATION ---------- */
+.wx-art {
+    margin: clamp(16px, 4.6vw, 28px) 0 clamp(6px, 2vw, 12px);
+    display: grid;
+    place-items: center;
+}
+
+.wx-art img {
+    display: block;
+    width: clamp(132px, 42vw, 182px);
+    height: auto;
+    object-fit: contain;
+    /* the asset is a flat PNG; keep its edges crisp on retina screens */
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* ---------- 7. READOUT ---------- */
+.wx-readout {
+    display: grid;
+    justify-items: center;
+    gap: .15rem;
+}
+
+.wx-temp {
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    font-family: var(--wx-display);
+    font-weight: 700;
+    line-height: .95;
+    letter-spacing: -.03em;
+    color: var(--wx-ink);
+    white-space: nowrap;
+}
+
+.wx-temp__val {
+    font-size: clamp(70px, 23vw, 100px);
+}
+
+/* degree + unit ride at the top of the numeral, as in the reference */
+.wx-temp__unit {
+    margin-top: .12em;
+    font-size: clamp(30px, 9.5vw, 42px);
+    letter-spacing: -.01em;
+}
+
+.wx-cond {
+    margin: .45rem 0 0;
+    font-size: clamp(1.08rem, 4.4vw, 1.3rem);
+    font-weight: 700;
+    letter-spacing: .01em;
+    color: var(--wx-ink-soft);
+    overflow-wrap: anywhere;
+}
+
+/* honest marker: the panel ships with labelled placeholder values and only
+   changes to the "live" wording once a real reading has been applied */
+.wx-status {
+    margin: .5rem 0 0;
+    max-width: 32ch;
+    padding: .34rem .85rem;
+    font-size: .74rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--wx-ink-soft);
+    background: rgba(128, 191, 245, .16);
+    border-radius: 999px;
+    overflow-wrap: anywhere;
+}
+
+/* demo: the uppercase pill that says, in as few words as possible, that the
+   numbers above it are placeholders */
+.wx-status--demo {
+    padding: .28rem .75rem;
+    font-size: .64rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--wx-ink-faint);
+    background: rgba(128, 191, 245, .14);
+}
+
+/* live: real weather is on screen */
+.wx-status--live {
+    color: #0E7F5C;
+    background: rgba(23, 190, 137, .16);
+}
+
+/* warn: something real went wrong (permission refused, lookup failed). The
+   placeholder values are still on screen, so the copy says so. */
+.wx-status--warn {
+    color: #96620F;
+    background: rgba(233, 173, 66, .2);
+}
+
+/* ---------- 8. ACTION BUTTON (real #check-weather control) ---------- */
+.wx-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 68%;
+    /* stays inside the reference's 55-70% band even on a 320px phone */
+    min-width: 150px;
+    min-height: 52px;
+    margin-top: clamp(22px, 5.4vw, 32px);
+    padding: 15px 26px;
+    font-family: var(--wx-body);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: .01em;
+    text-align: center;
+    color: #fff;
+    background: var(--wx-btn);
+    border: 0;
+    border-radius: 18px;
+    box-shadow: 0 12px 22px -12px rgba(23, 108, 168, .9);
+    cursor: pointer;
+    overflow-wrap: anywhere;
+    transition: background-color .18s ease, transform .18s ease, box-shadow .18s ease;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.wx-btn:hover {
+    background: var(--wx-btn-hover);
+    transform: translateY(-1px);
+}
+
+.wx-btn:active {
+    background: var(--wx-btn-press);
+    transform: translateY(0);
+    box-shadow: 0 6px 14px -10px rgba(23, 108, 168, .9);
+}
+
+/* the page's own script disables this button once a session starts and
+   re-enables it when location permission is refused — that state is real,
+   so it is shown with reduced emphasis, not a fabricated loader */
+.wx-btn:disabled {
+    cursor: default;
+    opacity: .78;
+    box-shadow: none;
+    transform: none;
+}
+
+.wx-btn:focus-visible {
+    outline: 3px solid rgba(11, 84, 128, .5);
+    outline-offset: 3px;
+}
+
+/* ---------- 9. CONSENT FOOT ---------- */
+.wx-card__foot {
+    margin-top: clamp(18px, 4.4vw, 26px);
+    max-width: 34ch;
+}
+
+.wx-consent {
+    margin: 0;
+    font-size: .76rem;
+    line-height: 1.55;
+    color: var(--wx-ink-faint);
+    overflow-wrap: anywhere;
+}
+
+.wx-stamp {
+    margin: .6rem 0 0;
+    font-size: .62rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #B4C2CB;
+}
+
+/* ---------- 10. RESPONSIVE ---------- */
+/* narrow phones: tighter copy, the button keeps its reference proportion */
+@media (max-width: 360px) {
+    .wx-card__foot {
+        max-width: 30ch;
+    }
+
+    .wx-consent {
+        font-size: .72rem;
+    }
+}
+
+/* tablets and desktop: centre the card, never stretch it */
+@media (min-width: 700px) {
+    .wx-card {
+        width: 100%;
+        max-width: 560px;
+        padding: 48px 52px 40px;
+    }
+
+    .wx-card__foot {
+        max-width: 40ch;
+    }
+}
+
+@media (min-width: 1024px) {
+    .wx-card {
+        max-width: 600px;
+    }
+}
+
+/* short viewports (landscape phones): tighten the vertical rhythm */
+@media (max-height: 680px) {
+    .wx-art {
+        margin: 12px 0 4px;
+    }
+
+    .wx-art img {
+        width: clamp(100px, 24vh, 132px);
+    }
+
+    .wx-btn {
+        margin-top: 18px;
+    }
+
+    .wx-card__foot {
+        margin-top: 14px;
+    }
+}
+
+/* ---------- 11. REDUCED MOTION ---------- */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}

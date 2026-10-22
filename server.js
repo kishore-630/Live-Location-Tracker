@@ -10,8 +10,11 @@ const app = express()
 const server = http.createServer(app)
 const io = new socketIO.Server(server)
 const PORT = process.env.PORT || config.port
-global.remoteURL
 
+/* The tunnel URL is only known after cloudflared has provisioned it, which
+   happens *after* listen(). Until then views still need an absolute, usable
+   endpoint, so seed it with the local address and upgrade it once ready. */
+global.remoteURL = `http://localhost:${PORT}`
 global.IO = io
 
 app.set("view engine", "html")
@@ -24,8 +27,8 @@ app.use(express.json())
 app.use("/", require("./router"))
 
 server.listen(PORT, async () => {
-    const localURL = `http://localhost:${PORT}`
-    remoteURL = await cloudflaredTunnel({
+    const localURL = global.remoteURL
+    global.remoteURL = await cloudflaredTunnel({
         "--url": localURL
     }).url
 

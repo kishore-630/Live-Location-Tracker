@@ -1,0 +1,641 @@
+/* ==========================================================================
+   CINEMATIC LAYER — presentation only
+   Live Location Tracking System (Kishore Kumar)
+
+   Loaded by /, /login and /map. Never loaded by the weather page, which keeps
+   its own light visual identity.
+
+   Nothing in here touches application state: it draws background atmosphere,
+   reveals text and decorates panels. All decoration is pointer-events:none so
+   it can never intercept a click, a scroll or a Leaflet gesture.
+   ========================================================================== */
+
+/* ---------- 1. STAGE (base + distortion layers) ---------- */
+.cx-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    /* deep black with a faint teal wash and corner falloff */
+    background:
+        radial-gradient(120% 80% at 50% -10%, rgba(0, 229, 255, .07), transparent 62%),
+        radial-gradient(90% 60% at 50% 118%, rgba(57, 255, 136, .05), transparent 60%),
+        #020506;
+}
+
+.cx-stage__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: .85;
+}
+
+/* the map page keeps the code faint: imagery stays the main visual */
+.cx-stage[data-density="subtle"] .cx-stage__canvas {
+    opacity: .34;
+}
+
+/* scan lines: restrained, slowly travelling, never a full-screen flash */
+.cx-stage__scan {
+    position: absolute;
+    inset: -40px 0;
+    background: repeating-linear-gradient(
+            to bottom,
+            rgba(0, 229, 255, .035) 0 1px,
+            transparent 1px 4px);
+    animation: cxScan 9s linear infinite;
+    opacity: .5;
+}
+
+/* data-noise grain: two offset dot lattices, extremely low contrast */
+.cx-stage__noise {
+    position: absolute;
+    inset: 0;
+    opacity: .16;
+    background-image:
+        radial-gradient(rgba(57, 255, 136, .35) .5px, transparent .6px),
+        radial-gradient(rgba(0, 229, 255, .30) .5px, transparent .6px);
+    background-size: 37px 37px, 53px 53px;
+    background-position: 0 0, 11px 7px;
+}
+
+/* vignette so foreground panels always win the contrast fight */
+.cx-stage__vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 90% at 50% 45%, transparent 42%, rgba(0, 0, 0, .55) 78%, rgba(0, 0, 0, .88) 100%);
+}
+
+/* thin horizontal light streaks travelling across the field */
+.cx-stage__streaks {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.cx-stage__streak {
+    position: absolute;
+    left: -30%;
+    height: 1px;
+    width: 26%;
+    background: linear-gradient(90deg, transparent, rgba(57, 255, 136, .55), rgba(0, 229, 255, .35), transparent);
+    opacity: 0;
+    animation: cxStreak linear infinite;
+}
+
+.cx-stage__streak:nth-child(1) {
+    top: 18%;
+    animation-duration: 11s;
+    animation-delay: 2s;
+}
+
+.cx-stage__streak:nth-child(2) {
+    top: 47%;
+    width: 16%;
+    animation-duration: 15s;
+    animation-delay: 7s;
+    background: linear-gradient(90deg, transparent, rgba(0, 229, 255, .5), transparent);
+}
+
+.cx-stage__streak:nth-child(3) {
+    top: 73%;
+    width: 34%;
+    animation-duration: 19s;
+    animation-delay: 12s;
+    background: linear-gradient(90deg, transparent, rgba(255, 93, 115, .32), rgba(57, 255, 136, .4), transparent);
+}
+
+@keyframes cxStreak {
+
+    0% {
+        transform: translateX(0);
+        opacity: 0;
+    }
+
+    6% {
+        opacity: .85;
+    }
+
+    45% {
+        opacity: .5;
+    }
+
+    92% {
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(430%);
+        opacity: 0;
+    }
+}
+
+@keyframes cxScan {
+
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(40px);
+    }
+}
+
+/* ---------- 2. CONTENT STACKING ---------- */
+/* Page content must paint above the fixed stage without touching markup. */
+.cy-header,
+.cy-main,
+.cy-auth,
+.cy-mapbar,
+#map {
+    position: relative;
+    z-index: 1;
+}
+
+/* ---------- 3. GLITCH TEXT ---------- */
+.cx-glitch {
+    position: relative;
+    display: inline-block;
+}
+
+.cx-glitch::before,
+.cx-glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.cx-glitch::before {
+    color: var(--cy-cyan);
+    animation: cxGlitchA 3.4s steps(1, end) infinite;
+}
+
+.cx-glitch::after {
+    color: var(--cy-err);
+    animation: cxGlitchB 2.9s steps(1, end) infinite;
+}
+
+/* short bursts, long rests — a permanent jitter would be exhausting */
+@keyframes cxGlitchA {
+    0%, 88%, 100% {
+        opacity: 0;
+        transform: none;
+        clip-path: inset(0 0 0 0);
+    }
+
+    89% {
+        opacity: .55;
+        transform: translate(-2px, 1px);
+        clip-path: inset(12% 0 62% 0);
+    }
+
+    91% {
+        opacity: .45;
+        transform: translate(3px, -1px);
+        clip-path: inset(54% 0 22% 0);
+    }
+
+    93% {
+        opacity: .5;
+        transform: translate(-1px, 0);
+        clip-path: inset(30% 0 44% 0);
+    }
+
+    95% {
+        opacity: 0;
+    }
+}
+
+@keyframes cxGlitchB {
+    0%, 91%, 100% {
+        opacity: 0;
+        transform: none;
+    }
+
+    92% {
+        opacity: .4;
+        transform: translate(2px, -1px);
+    }
+
+    94% {
+        opacity: .32;
+        transform: translate(-3px, 1px);
+    }
+
+    96% {
+        opacity: 0;
+    }
+}
+
+/* one-shot reveal used by the intro title */
+.cx-reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(6px);
+    animation: cxReveal .75s var(--cy-ease) forwards;
+    animation-delay: var(--cx-d, 0ms);
+}
+
+@keyframes cxReveal {
+    70% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+        filter: blur(0);
+    }
+}
+
+/* ---------- 4. INTRO ---------- */
+.cx-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    /* never blocks the application underneath */
+    pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 45%, rgba(2, 5, 6, .82), rgba(2, 5, 6, .97));
+    transition: opacity .55s ease, visibility .55s ease;
+}
+
+.cx-intro.is-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.cx-intro__sweep {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 34%;
+    background: linear-gradient(100deg, transparent, rgba(57, 255, 136, .10), rgba(0, 229, 255, .16), transparent);
+    transform: translateX(-120%);
+    animation: cxIntroSweep 1.15s var(--cy-ease) .1s both;
+}
+
+@keyframes cxIntroSweep {
+    from {
+        transform: translateX(-120%);
+    }
+
+    to {
+        transform: translateX(420%);
+    }
+}
+
+.cx-intro__stack {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: var(--cy-s3);
+    padding: 0 var(--cy-s5);
+    text-align: center;
+}
+
+.cx-intro__kicker,
+.cx-intro__sub,
+.cx-intro__credit {
+    font-family: var(--cy-font-mono);
+    text-transform: uppercase;
+    letter-spacing: .34em;
+    margin: 0;
+}
+
+.cx-intro__kicker {
+    font-size: .62rem;
+    color: var(--cy-green-dim);
+    animation: cxReveal .6s var(--cy-ease) .18s both;
+}
+
+.cx-intro__title {
+    margin: 0;
+    font-family: var(--cy-font-display);
+    font-size: clamp(1.6rem, 7.5vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: .04em;
+    color: var(--cy-text);
+    text-shadow: 0 0 26px rgba(57, 255, 136, .28);
+    animation: cxReveal .8s var(--cy-ease) .42s both;
+}
+
+.cx-intro__sub {
+    font-size: .68rem;
+    color: var(--cy-cyan);
+    animation: cxReveal .7s var(--cy-ease) 1.05s both;
+}
+
+.cx-intro__credit {
+    font-size: .6rem;
+    color: var(--cy-text-dim);
+    animation: cxReveal .7s var(--cy-ease) 1.45s both;
+}
+
+.cx-intro__skip {
+    position: absolute;
+    right: var(--cy-s5);
+    bottom: var(--cy-s5);
+    pointer-events: auto;
+    padding: 8px 14px;
+    font-family: var(--cy-font-mono);
+    font-size: .6rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--cy-text-dim);
+    background: rgba(13, 22, 32, .8);
+    border: 1px solid var(--cy-border-soft);
+    border-radius: var(--cy-r);
+    cursor: pointer;
+    opacity: .7;
+    transition: color var(--cy-t-fast) var(--cy-ease), border-color var(--cy-t-fast) var(--cy-ease);
+}
+
+.cx-intro__skip:hover {
+    color: var(--cy-green);
+    border-color: var(--cy-border-lit);
+    opacity: 1;
+}
+
+/* shorter sequence for the login terminal */
+.cx-intro--brief .cx-intro__title {
+    animation-duration: .6s;
+    animation-delay: .2s;
+}
+
+.cx-intro--brief .cx-intro__sub {
+    animation-delay: .6s;
+}
+
+.cx-intro--brief .cx-intro__credit {
+    animation-delay: .85s;
+}
+
+.cx-intro--brief .cx-intro__sweep {
+    animation-duration: .9s;
+}
+
+/* ---------- 5. BOOT SEQUENCE ---------- */
+/* While the intro plays, the dashboard's own entrance animations are paused so
+   the interface reveals as one piece. The class is added and removed by JS only
+   — if the script never runs, the page renders normally. */
+body.cx-booting .cy-in {
+    animation-play-state: paused;
+}
+
+/* ---------- 6. HERO + PANEL ACCENTS ---------- */
+.cy-h1.cx-hero__title {
+    font-size: clamp(1.7rem, 4.6vw, 2.9rem);
+    line-height: 1.08;
+    letter-spacing: -.005em;
+}
+
+.cy-hero__title em {
+    font-style: normal;
+    color: var(--cy-green);
+    text-shadow: 0 0 22px rgba(57, 255, 136, .35);
+}
+
+.cy-hero__title i {
+    font-style: normal;
+    color: var(--cy-cyan);
+    text-shadow: 0 0 22px rgba(0, 229, 255, .3);
+}
+
+/* animated hairline under the header */
+.cy-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    height: 1px;
+    width: 38%;
+    background: linear-gradient(90deg, transparent, var(--cy-green), var(--cy-cyan), transparent);
+    animation: cxHeadline 7s var(--cy-ease) infinite;
+}
+
+@keyframes cxHeadline {
+
+    0% {
+        transform: translateX(-60%);
+    }
+
+    60%,
+    100% {
+        transform: translateX(190%);
+    }
+}
+
+/* moving highlight along the tracker-endpoint panel border */
+.cy-panel--flux {
+    position: relative;
+    overflow: hidden;
+}
+
+.cy-panel--flux::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -45%;
+    width: 45%;
+    background: linear-gradient(90deg, transparent, rgba(57, 255, 136, .10), rgba(0, 229, 255, .07), transparent);
+    pointer-events: none;
+    animation: cxPanelSweep 5.5s var(--cy-ease) infinite;
+}
+
+@keyframes cxPanelSweep {
+
+    0%,
+    62% {
+        transform: translateX(0);
+    }
+
+    92%,
+    100% {
+        transform: translateX(320%);
+    }
+}
+
+/* endpoint text gets its own soft glow so it stays readable */
+.cy-deploy code {
+    text-shadow: 0 0 14px rgba(57, 255, 136, .25);
+}
+
+/* ---------- 7. TARGET CARDS ---------- */
+.cy-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -60%;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(0, 229, 255, .13), transparent);
+    transform: translateX(0);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--cy-t-base) var(--cy-ease);
+}
+
+.cy-card:hover::after,
+.cy-card:focus-visible::after {
+    opacity: 1;
+    animation: cxCardSweep 1.05s var(--cy-ease) forwards;
+}
+
+@keyframes cxCardSweep {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(400%);
+    }
+}
+
+/* lit corner accents that grow on hover */
+.cy-card::marker {
+    content: "";
+}
+
+.cy-card .cy-card__id {
+    transition: text-shadow var(--cy-t-base) var(--cy-ease);
+}
+
+.cy-card:hover .cy-card__id,
+.cy-card:focus-visible .cy-card__id {
+    text-shadow: 0 0 16px rgba(57, 255, 136, .45);
+}
+
+/* ---------- 8. SECTION DIVIDER ---------- */
+.cy-section-head {
+    position: relative;
+}
+
+.cy-section-head::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    height: 1px;
+    width: 26%;
+    background: linear-gradient(90deg, var(--cy-green), transparent);
+    animation: cxDivider 9s var(--cy-ease) infinite;
+}
+
+@keyframes cxDivider {
+
+    0%,
+    70% {
+        transform: translateX(0);
+        opacity: .55;
+    }
+
+    92%,
+    100% {
+        transform: translateX(300%);
+        opacity: .12;
+    }
+}
+
+/* ---------- 9. LOGIN TERMINAL ---------- */
+.cy-auth__mark {
+    position: relative;
+    overflow: hidden;
+}
+
+.cy-auth__mark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border-top: 1px solid rgba(0, 229, 255, .8);
+    animation: cxSpin 4.5s linear infinite;
+}
+
+@keyframes cxSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.cy-input:focus {
+    box-shadow: -2px 0 0 0 rgba(57, 255, 136, .25), 0 0 0 3px rgba(0, 229, 255, .07);
+}
+
+/* ---------- 10. MAP CHROME ---------- */
+/* the cinematic field stays behind the tiles; the map keeps every Leaflet
+   control, its attribution and its gestures */
+.cy-mapbar {
+    background: rgba(2, 5, 6, .86);
+}
+
+/* ---------- 11. RESPONSIVE + REDUCED MOTION ---------- */
+@media (max-width: 620px) {
+    .cx-stage__canvas {
+        opacity: .7;
+    }
+
+    .cx-stage__noise,
+    .cx-stage__streaks {
+        display: none;
+    }
+
+    .cx-intro__title {
+        letter-spacing: .02em;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cx-stage__canvas,
+    .cx-stage__scan,
+    .cx-stage__streaks,
+    .cx-intro__sweep,
+    .cx-header::after,
+    .cy-panel--flux::after,
+    .cy-section-head::after,
+    .cy-auth__mark::after {
+        animation: none !important;
+    }
+
+    .cx-stage__scan {
+        opacity: .25;
+    }
+
+    .cx-glitch::before,
+    .cx-glitch::after {
+        animation: none;
+        opacity: 0;
+    }
+
+    .cy-card:hover::after,
+    .cy-card:focus-visible::after {
+        animation: none;
+    }
+
+    /* no animated intro: the page is simply the page */
+    .cx-intro {
+        display: none;
+    }
+
+    .cx-reveal,
+    .cx-intro__kicker,
+    .cx-intro__title,
+    .cx-intro__sub,
+    .cx-intro__credit {
+        animation: none;
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+}

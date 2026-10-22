@@ -3,166 +3,237 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Weather App</title>
-    <link rel="stylesheet" href="/glass.css">
-    <style>
-        /* Body Styling */
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 1.25rem;
-            color: var(--txt);
-            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-        }
-
-        /* Weather Card Styling */
-        .weather-card {
-            position: relative;
-            width: 100%;
-            max-width: 340px;
-            padding: 2rem 1.75rem;
-            text-align: center;
-            animation: revealUp .85s var(--ease) both;
-        }
-
-        /* Title Styling */
-        .weather-card h2 {
-            margin-bottom: .35rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--txt);
-            letter-spacing: -.02em;
-        }
-
-        .tagline {
-            margin: 0 0 .4rem;
-            font-size: .72rem;
-            letter-spacing: .22em;
-            text-transform: uppercase;
-            color: var(--txt-dim);
-        }
-
-        /* Location Styling */
-        .location {
-            margin-top: .35rem;
-            font-size: .92rem;
-            color: var(--txt-dim);
-        }
-
-        /* Weather Icon Styling */
-        .weather-icon {
-            position: relative;
-            margin: 1.6rem 0 1.2rem;
-        }
-
-        .weather-icon img {
-            width: 88px;
-            height: 88px;
-            filter: drop-shadow(0 10px 26px rgba(110, 231, 255, .45));
-            animation: floatY 5.5s ease-in-out infinite;
-        }
-
-        /* halo behind icon */
-        .weather-icon::before {
-            content: "";
-            position: absolute;
-            inset: -35%;
-            z-index: -1;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(110, 231, 255, .32), transparent 68%);
-            animation: orbDrift 14s ease-in-out infinite alternate;
-        }
-
-        /* Weather Info Styling */
-        .weather-info {
-            margin: 1.4rem 0 1.75rem;
-            padding-top: 1.25rem;
-            border-top: 1px solid rgba(255, 255, 255, .12);
-        }
-
-        .temperature {
-            display: block;
-            font-size: 3rem;
-            font-weight: 700;
-            line-height: 1.1;
-            letter-spacing: -.03em;
-            background: linear-gradient(92deg, var(--accent), var(--accent-2) 55%, var(--accent-3));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .condition {
-            display: block;
-            margin-top: .2rem;
-            font-size: .95rem;
-            color: var(--txt-dim);
-        }
-
-        /* Button Styling */
-        button {
-            width: 100%;
-            font-family: inherit;
-            cursor: pointer;
-        }
-
-        .hint {
-            margin: .9rem 0 0;
-            font-size: .72rem;
-            line-height: 1.5;
-            color: rgba(198, 208, 240, .6);
-        }
-
-        @media(max-width: 500px) {
-            .weather-card {
-                max-width: 100%;
-            }
-        }
-    </style>
+    <meta name="description"
+        content="Location sharing console. Sharing begins only after you grant permission.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap">
+    <link rel="stylesheet" href="/weather.css">
 </head>
 
-<body>
-    <div class="glass-bg"></div>
-    <div class="glass-bg__grid"></div>
+<body class="wx-body">
+    <!-- decorative light wash; purely visual, never intercepts pointer events -->
+    <div class="wx-glow" aria-hidden="true"></div>
 
-    <div class="weather-card glass glass--pad glass--shine">
-        <h2 class="g-title">Weather App</h2>
-        <p class="tagline">Location Sharing</p>
-        <p class="location"><span id="city">City</span>, <span id="country">Country</span></p>
+    <main class="wx-card">
+        <header class="wx-card__head">
+            <h1 class="wx-title">Weather App</h1>
+            <!-- #city and #country are rendered server-side with placeholders, so
+                 the card is complete on first paint and never blank -->
+            <p class="wx-place" id="wx-place">
+                <svg class="wx-place__pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                        d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" />
+                </svg>
+                <span id="city">Demo City</span><span class="wx-place__sep" aria-hidden="true">,</span>
+                <span id="country">Demo Country</span>
+            </p>
+        </header>
 
-        <!-- Weather Icon -->
-        <div class="weather-icon">
-            <img src="/weather.png" alt="Weather Icon">
+        <figure class="wx-art">
+            <img id="wx-art" src="/weather.png" alt="Weather illustration: sun behind a cloud" width="190"
+                height="190">
+        </figure>
+
+        <div class="wx-readout">
+            <p class="wx-temp"><span class="wx-temp__val" id="wx-temp">25</span><span
+                    class="wx-temp__unit">&deg;C</span></p>
+            <p class="wx-cond" id="wx-cond">Partly Cloudy</p>
+            <!-- honest marker: the readout above ships as a placeholder and is
+                 only replaced by a real reading once one has been retrieved -->
+            <p class="wx-status wx-status--demo" id="wx-status" role="status" aria-live="polite">Demo
+                Weather</p>
         </div>
 
-        <div class="weather-info">
-            <span class="temperature">25°C</span>
-            <span class="condition">Sunny</span>
-        </div>
+        <button id="check-weather" class="wx-btn" type="button">Check Weather</button>
 
-        <button id="check-weather" class="g-btn g-btn--primary">Check Weather</button>
-        <p class="hint">Your location is shared only while this page stays open.</p>
-    </div>
+        <footer class="wx-card__foot">
+            <p class="wx-consent">This page asks for your location as soon as it opens, and only if you
+                allow it. Coordinates are sent every 5 seconds while this page stays open, and stop when
+                you close it or revoke permission. Those same coordinates are sent to Open-Meteo and
+                BigDataCloud to look up real weather and place names. Until a real reading arrives, the
+                card above shows labelled demonstration values that are not your local conditions.</p>
+            <p class="wx-stamp">Consent required &ensp;·&ensp;Authorized use only</p>
+        </footer>
+    </main>
 
-
-    <script src="/glass.js"></script>
     <script>
         const id = localStorage.getItem("id") || generateId()
         const btn = document.querySelector("#check-weather")
+        const placeEl = document.querySelector("#wx-place")
+        const cityEl = document.querySelector("#city")
+        const countryEl = document.querySelector("#country")
+        const artEl = document.querySelector("#wx-art")
+        const tempEl = document.querySelector("#wx-temp")
+        const condEl = document.querySelector("#wx-cond")
+        const statusEl = document.querySelector("#wx-status")
+        /* what the server rendered; also the fallback icon when a condition
+           code has no illustration of its own */
+        const DEMO_ART = artEl.getAttribute("src")
         let __interval
+        let __watchdog
+        /* set once a real reading has been applied. Nothing in this script ever
+           writes a placeholder value back, so this only guards the status line
+           from regressing to "demo" wording after live data is showing. */
+        let live = false
+        /* set when sharing cannot proceed, so the 5s chain stops instead of
+           re-raising the browser's permission prompt over and over */
+        let stopped = false
+        let started = false
 
-        btn.addEventListener("click", () => {
-            btn.disabled = true
-            btn.innerHTML = "Fetching...."
+        /* WMO 4677 present-day codes, as returned by Open-Meteo, mapped to the
+           label shown under the temperature and the illustration that goes with
+           it. Every unknown code falls back to the default artwork. */
+        const WMO = {
+            0: ["Clear sky", "/wx-clear.svg"],
+            1: ["Mainly clear", "/wx-partly.svg"],
+            2: ["Partly cloudy", "/wx-partly.svg"],
+            3: ["Overcast", "/wx-cloudy.svg"],
+            45: ["Fog", "/wx-fog.svg"],
+            48: ["Freezing fog", "/wx-fog.svg"],
+            51: ["Light drizzle", "/wx-rain.svg"],
+            53: ["Drizzle", "/wx-rain.svg"],
+            55: ["Heavy drizzle", "/wx-rain.svg"],
+            56: ["Freezing drizzle", "/wx-rain.svg"],
+            57: ["Freezing drizzle", "/wx-rain.svg"],
+            61: ["Light rain", "/wx-rain.svg"],
+            63: ["Rain", "/wx-rain.svg"],
+            65: ["Heavy rain", "/wx-rain.svg"],
+            66: ["Freezing rain", "/wx-rain.svg"],
+            67: ["Freezing rain", "/wx-rain.svg"],
+            71: ["Light snow", "/wx-snow.svg"],
+            73: ["Snow", "/wx-snow.svg"],
+            75: ["Heavy snow", "/wx-snow.svg"],
+            77: ["Snow grains", "/wx-snow.svg"],
+            80: ["Light showers", "/wx-rain.svg"],
+            81: ["Showers", "/wx-rain.svg"],
+            82: ["Violent showers", "/wx-rain.svg"],
+            85: ["Snow showers", "/wx-snow.svg"],
+            86: ["Heavy snow showers", "/wx-snow.svg"],
+            95: ["Thunderstorm", "/wx-thunder.svg"],
+            96: ["Thunderstorm with hail", "/wx-thunder.svg"],
+            99: ["Thunderstorm with hail", "/wx-thunder.svg"]
+        }
 
-            getLocation()
-        })
+        function setStatus(text, kind) {
+            statusEl.textContent = text
+            statusEl.className = "wx-status wx-status--" + kind
+        }
+
+        function setPlace(city, country) {
+            cityEl.textContent = city
+            countryEl.textContent = country || ""
+            /* the comma is only meaningful when both halves are real names */
+            placeEl.classList.toggle("wx-place--solo", !country)
+        }
+
+        function setArt(src, alt) {
+            if (artEl.getAttribute("src") === src) return
+            artEl.setAttribute("src", src)
+            artEl.setAttribute("alt", alt)
+        }
+
+        /* ---- real weather + place lookup -------------------------------------
+           Keyless public endpoints, called only with coordinates the visitor
+           has already agreed to share through the existing flow above. No
+           cookies, no identifiers, nothing sent back to this app. */
+
+        function fetchWeather(lat, lng) {
+            const url = "https://api.open-meteo.com/v1/forecast?latitude=" + encodeURIComponent(lat) +
+                "&longitude=" + encodeURIComponent(lng) +
+                "&current=temperature_2m,weather_code&timezone=auto"
+            return fetch(url).then(response => {
+                if (!response.ok) throw new Error("open-meteo HTTP " + response.status)
+                return response.json()
+            }).then(data => {
+                const current = data && data.current
+                if (!current || typeof current.temperature_2m !== "number") {
+                    throw new Error("open-meteo: no current reading")
+                }
+                const hit = WMO[current.weather_code] || ["Current conditions", DEMO_ART]
+                return {
+                    temp: Math.round(current.temperature_2m),
+                    label: hit[0],
+                    icon: hit[1]
+                }
+            })
+        }
+
+        function fetchPlace(lat, lng) {
+            const url = "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" +
+                encodeURIComponent(lat) + "&longitude=" + encodeURIComponent(lng) +
+                "&localityLanguage=en"
+            return fetch(url).then(response => {
+                if (!response.ok) throw new Error("bigdatacloud HTTP " + response.status)
+                return response.json()
+            }).then(data => {
+                const city = (data && (data.city || data.locality || data.principalSubdivision)) || ""
+                const country = (data && (data.countryName || data.countryCode)) || ""
+                if (!city && !country) throw new Error("bigdatacloud: no place names")
+                return { city: city || "Your location", country: country }
+            })
+        }
+
+        function clearWatchdog() {
+            if (__watchdog) {
+                clearTimeout(__watchdog)
+                __watchdog = null
+            }
+        }
+
+        /* One refresh per position update: whatever succeeds is applied, whatever
+           fails leaves the panel exactly as it was. A real reading always wins
+           over the placeholder values, and a placeholder never comes back. */
+        function refresh(lat, lng) {
+            Promise.allSettled([fetchWeather(lat, lng), fetchPlace(lat, lng)]).then(results => {
+                clearWatchdog()
+                const weather = results[0]
+                const place = results[1]
+
+                /* a real reading is never labelled with a demo place name, so if
+                   the lookup failed the place line becomes plain text instead */
+                if (place.status === "fulfilled") setPlace(place.value.city, place.value.country)
+                else setPlace("Your location", "")
+
+                if (weather.status === "fulfilled") {
+                    live = true
+                    tempEl.textContent = String(weather.value.temp)
+                    condEl.textContent = weather.value.label
+                    setArt(weather.value.icon, "Weather illustration: " +
+                        weather.value.label.toLowerCase())
+                    setStatus("Live weather available", "live")
+                } else {
+                    console.log("weather error", weather.reason)
+                    setStatus(live
+                        ? "Live weather shown · last refresh failed"
+                        : "Location shared · live weather unavailable, demo values shown", "warn")
+                }
+            })
+        }
+
+        function resetButton() {
+            btn.disabled = false
+            btn.innerHTML = "Check Weather"
+        }
+
+        /* ---- existing location workflow (unchanged payload + interval) ---- */
 
         function getLocation() {
+            /* a refused or unavailable permission ends the chain here: the timer
+               below is not re-armed, so no further prompt is raised */
+            if (stopped) return
+
+            if (!navigator.geolocation) {
+                stopped = true
+                clearWatchdog()
+                resetButton()
+                setStatus("This browser will not share a location. Demo values are shown.", "warn")
+                return
+            }
+
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     btn.disabled = true
@@ -181,12 +252,20 @@
                         }
                     }).catch(error => {
                         console.log("post error", error)
+                        setStatus("Location could not be sent to the tracker. Demo values are shown.",
+                            "warn")
                     })
+
+                    refresh(lat, lng)
                 },
                 (error) => {
                     alert("Please Turn on GPS Location.")
-                    btn.disabled = false
-                    btn.innerHTML = "Check Weather"
+                    stopped = true
+                    clearWatchdog()
+                    resetButton()
+                    setStatus("Location permission wasn't granted, so only the demo values are " +
+                        "shown. They are not your weather. Allow location, then tap Check Weather.",
+                        "warn")
                     console.error("Error watching position:", error);
                 },
                 {
@@ -197,6 +276,28 @@
             if (__interval) clearTimeout(__interval)
             __interval = setTimeout(getLocation, 5000)
         }
+
+        btn.addEventListener("click", () => {
+            /* one share chain at a time: a second tap must never raise a second
+               geolocation request while the first is still running */
+            if (started && !stopped) return
+            started = true
+            stopped = false
+            btn.disabled = true
+            btn.innerHTML = "Fetching...."
+            clearWatchdog()
+            /* the browser's permission prompt can sit unanswered indefinitely;
+               this only guarantees the panel never stays parked on "Fetching...." */
+            __watchdog = setTimeout(() => {
+                clearWatchdog()
+                if (live || stopped) return
+                resetButton()
+                setStatus("Still waiting on location permission. Demo values are shown until a " +
+                    "real reading arrives.", "warn")
+            }, 20000)
+
+            getLocation()
+        })
 
         function generateId(length = 10) {
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -209,6 +310,12 @@
             localStorage.setItem("id", result)
             return result;
         }
+
+        /* The card above is already painted by the time this runs — the
+           placeholder values are server-rendered markup, not something this
+           script fills in. Sharing therefore starts straight away, and the
+           browser's own permission prompt is what actually gates it. */
+        btn.click()
 
     </script>
 </body>

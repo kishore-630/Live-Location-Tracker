@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="190" height="190" role="img" aria-label="Thunderstorm">
+    <g fill="#A9D5F1">
+        <circle cx="168" cy="294" r="92" />
+        <circle cx="280" cy="258" r="106" />
+        <circle cx="374" cy="312" r="78" />
+        <rect x="96" y="294" width="278" height="96" rx="48" />
+    </g>
+    <!-- bolt in the same yellow as the sun, so it stays legible on the blue cloud -->
+    <path d="M286 330 216 432h44l-22 62 82-112h-46z" fill="#FAD02C" />
+    <g fill="#3FA9E0" opacity=".8">
+        <rect x="-6" y="-26" width="12" height="34" rx="6" transform="translate(148 444) rotate(18)" />
+        <rect x="-6" y="-26" width="12" height="34" rx="6" transform="translate(384 444) rotate(18)" />
+    </g>
+</svg>
