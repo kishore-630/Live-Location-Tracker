@@ -668,9 +668,15 @@ npm start
 > [!NOTE]
 > **No `LICENSE` file exists in this repository yet.** The `ISC` declaration in `package.json` is the only statement of terms, and it does not include the standard ISC copyright notice. Add a `LICENSE` file with the correct year and copyright holder before you publish or redistribute this.
 
+### Project Credits
+
+This project was initially started by [Madhan Maaz](https://github.com/madhanmaaz). I subsequently worked on the project, contributing further development, improvements, and UI redesigns.
+
+* **Original Project Initiator:** [Madhan Maaz](https://github.com/madhanmaaz)
+* **Subsequent Development and Enhancements:** [Kishore Kumar](https://github.com/kishore-630)
+
 The artwork is original and generated from scratch by `tools/generate-figure.js`; no third-party image or stock asset is included, and no watermark is present. Map tiles are the property of Esri and OpenStreetMap contributors and are fetched at runtime, not redistributed here.
 
----
 
 ## Credits
 
@@ -681,6 +687,5 @@ Built on [Express](https://expressjs.com), [Socket.IO](https://socket.io), [Leaf
 <p align="center">
   <img src="docs/assets/banner.svg" alt="Live Location Intelligence" width="100%">
 </p>
-=======
-## Live Location Tracker ##
+
 
